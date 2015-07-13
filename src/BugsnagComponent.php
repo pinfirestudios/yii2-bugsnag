@@ -57,6 +57,12 @@ class BugsnagComponent extends \yii\base\Component
      */
     public function getUserData()
     {
+        // Don't crash if not using yii\web\User
+        if (empty(Yii::$app->components['user']['identityClass']))
+        {
+            return null;
+        }
+
         $ret = [];
         if (isset(Yii::$app->user->id))
         {
@@ -66,17 +72,10 @@ class BugsnagComponent extends \yii\base\Component
 
     public function getClient() 
     {        
-        if (php_sapi_name() != 'cli' && !Yii::$app->user->isGuest)
+        $clientUserData = $this->getUserData();
+        if (!empty($clientUserData))
         {
-            try
-            {
-                $clientUserData = $this->getUserData();
-                $this->client->setUser($clientUserData);
-            }
-            catch (\Exception $e)
-            {
-                Yii::error("Error setting Bugsnag user data: " . $e, __CLASS__);
-            }
+            $this->client->setUser($clientUserData);
         }
         
         return $this->client;
