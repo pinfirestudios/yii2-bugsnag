@@ -15,7 +15,7 @@ To use, configure as such:
                 'traceLevel' => 8,
                 'targets' => [
                     [
-                        'class' => 'common\components\BugsnagLogTarget',
+                        'class' => 'jcherniak\yii2bugsnag\BugsnagLogTarget',
                         'levels' => ['error', 'warning', 'info', 'trace'],
                         'logVars' => [],
                     ]
