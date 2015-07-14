@@ -8,6 +8,7 @@ class BugsnagErrorHandler extends \yii\web\ErrorHandler
     public function logException($exception)
     {
         Yii::$app->bugsnag->notifyException($exception);
+        parent::logException($exception);
     }
 
     /**
