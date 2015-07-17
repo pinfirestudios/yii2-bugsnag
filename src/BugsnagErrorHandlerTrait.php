@@ -1,0 +1,51 @@
+<?php
+namespace jcherniak\yii2bugsnag;
+
+use Yii;
+
+/**
+ * Adds bugsnag error handling to classes deriving from \yii\base\ErrorHandler
+ */
+trait BugsnagErrorHandlerTrait
+{
+    /**
+     * Tracks if we are in the exception handler and have already notified Bugsnag about
+     * the exception
+     *
+     * @var boolean
+     */
+    protected $inExceptionHandler = false;
+
+    /**
+     * Only log the exception here if we haven't handled it below (in handleException)
+     */
+    public function logException($exception)
+    {
+        if (!$this->inExceptionHandler)
+        {
+            Yii::$app->bugsnag->notifyException($exception);
+        }
+    }
+
+    /**
+     * Ensures CB logs are written to the DB if an exception occurs
+     */
+    public function handleException($exception)
+    {
+        Yii::$app->bugsnag->notifyException($exception);
+        $this->inExceptionHandler = true;
+
+        parent::handleException($exception);
+    }
+
+    /**
+     * Handles fatal PHP errors
+     */
+    public function handleFatalError()
+    {
+        // Call into Bugsnag client's errorhandler since this will potentially kill the script below 
+        Yii::$app->bugsnag->runShutdownHandler();
+
+        parent::handleFatalError();
+    }
+}
