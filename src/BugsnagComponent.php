@@ -122,15 +122,6 @@ class BugsnagComponent extends \yii\base\Component
 
     public function notifyException(\Exception $exception)
     {
-        if ($prev = $exception->getPrevious())
-        {
-            do 
-            {
-                $this->notifyException($prev);
-            }
-            while ($prev = $prev->getPrevious());
-        }
-
         $metadata = null;
         if (method_exists($exception, 'getMetadata'))
         {
