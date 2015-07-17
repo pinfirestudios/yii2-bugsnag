@@ -6,7 +6,7 @@ use Yii;
 /**
  * Basic error handler to deal with console commands
  */
-class BugsnagConsoleErrorHandler extends \yii\base\ErrorHandler
+class BugsnagConsoleErrorHandler extends \yii\console\ErrorHandler
 {
     public function logException($exception)
     {
