@@ -43,8 +43,12 @@ trait BugsnagErrorHandlerTrait
      */
     public function handleFatalError()
     {
-        // Call into Bugsnag client's errorhandler since this will potentially kill the script below 
-        Yii::$app->bugsnag->runShutdownHandler();
+        // When running under codeception, a Yii application won't actually exist, so we just have to eat it here...
+        if (is_object(Yii::$app))
+        {
+            // Call into Bugsnag client's errorhandler since this will potentially kill the script below 
+            Yii::$app->bugsnag->runShutdownHandler();
+        }
 
         parent::handleFatalError();
     }
