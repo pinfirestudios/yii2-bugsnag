@@ -6,6 +6,8 @@ use \yii\web\View;
 
 class BugsnagComponent extends \yii\base\Component
 {
+    const IGNORED_LOG_CATEGORY = 'Bugsnag notified exception';
+
     public $bugsnag_api_key;
 
     public $releaseStage = null;

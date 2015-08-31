@@ -25,6 +25,11 @@ class BugsnagLogTarget extends \yii\log\Target
             {
                 list($message, $level, $category, $timestamp, $trace) = $message; 
                 
+                if ($category == BugsnagComponent::IGNORED_LOG_CATEGORY) 
+                {
+                    continue;
+                }
+
                 if ($level == Logger::LEVEL_ERROR)
                 {
                     Yii::$app->bugsnag->notifyError($category, $message . " ($timestamp)", $trace);
