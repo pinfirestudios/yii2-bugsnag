@@ -4,7 +4,7 @@ To use, configure as such:
     $config = [
         'components' => [
             'errorHandler' => [
-                'class' => 'jcherniak\yii2bugsnag\BugsnagErrorHandler' // For your web configuration
+                'class' => 'jcherniak\yii2bugsnag\BugsnagWebErrorHandler' // For your web configuration
                 'class' => 'jcherniak\yii2bugsnag\BugsnagConsoleErrorHandler' // For your console configuration
             ],
             'bugsnag' => [
