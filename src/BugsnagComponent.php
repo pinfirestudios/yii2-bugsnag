@@ -122,7 +122,7 @@ class BugsnagComponent extends \yii\base\Component
         $this->getClient()->notifyError($category, $message, ['trace' => $trace], 'info');
     }
 
-    public function notifyException(\Exception $exception, $severity = null)
+    public function notifyException($exception, $severity = null)
     {
         $metadata = null;
         if ($exception instanceof BugsnagCustomMetadataInterface)
