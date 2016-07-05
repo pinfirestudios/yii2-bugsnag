@@ -1,5 +1,5 @@
 <?php
-namespace jcherniak\yii2bugsnag;
+namespace pinfirestudios\yii2bugsnag;
 
 /**
  * Handles exceptions on the console

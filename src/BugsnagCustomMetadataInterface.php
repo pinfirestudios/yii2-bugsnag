@@ -1,5 +1,5 @@
 <?php
-namespace jcherniak\yii2bugsnag;
+namespace pinfirestudios\yii2bugsnag;
 
 /**
  * Allows an exception to set custom metadata to pass to Bugsnag

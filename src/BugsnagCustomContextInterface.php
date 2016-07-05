@@ -1,5 +1,5 @@
 <?php
-namespace jcherniak\yii2bugsnag;
+namespace pinfirestudios\yii2bugsnag;
 
 /**
  * Allows an exception to set a custom context (instead of defaulting to URL)

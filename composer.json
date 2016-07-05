@@ -1,18 +1,18 @@
 {
-    "name": "jcherniak/yii2-bugsnag",
+    "name": "pinfirestudios/yii2-bugsnag",
     "description": "Yii2 log target and ErrorHandler for BugSnag",
     "keywords": ["logging", "errors"],
     "license": "MIT",
     "authors": [
         {
             "name": "Justin Cherniak",
-            "email": "justin@justin-c.com",
-            "homepage": "http://www.justin-c.com"
+            "email": "justin@pinfirestudios.com",
+            "homepage": "http://www.pinfirestudios.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "jcherniak\\yii2bugsnag\\": "src/"
+            "pinfirestudios\\yii2bugsnag\\": "src/"
         }
     },
     "require": {
