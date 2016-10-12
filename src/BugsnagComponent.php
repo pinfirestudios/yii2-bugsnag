@@ -72,14 +72,14 @@ class BugsnagComponent extends \yii\base\Component
         }
     }
 
-    public function getClient() 
-    {        
+    public function getClient()
+    {
         $clientUserData = $this->getUserData();
         if (!empty($clientUserData))
         {
             $this->client->setUser($clientUserData);
         }
-        
+
         return $this->client;
     }
 
@@ -94,14 +94,14 @@ class BugsnagComponent extends \yii\base\Component
         {
             $trace = $error->metaData['trace'];
             unset($error->metaData['trace']);
-            
+
             if (!empty($trace))
             {
                 $firstFrame = array_shift($trace);
                 $error->setStacktrace(\Bugsnag_Stacktrace::fromBacktrace($error->config, $trace, $firstFrame['file'], $firstFrame['line']));
             }
         }
-    
+
         $error->setMetaData([
             'logs' => BugsnagLogTarget::getMessages(),
         ]);
@@ -134,7 +134,7 @@ class BugsnagComponent extends \yii\base\Component
         {
             $this->getClient()->setContext($exception->getContext());
         }
-        
+
         $this->getClient()->notifyException($exception, $metadata, $severity);
     }
 
@@ -146,25 +146,5 @@ class BugsnagComponent extends \yii\base\Component
         }
 
         $this->getClient()->shutdownHandler();
-    }
-
-    public function getJavascript()
-    {
-        $ret = <<<JS
-            <script src='//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js'
-                data-apikey='{$this->bugsnag_api_key}'></script>
-JS;
-
-        $userObj = $this->getUserData();
-        $userJson = json_encode($userObj);
-
-        $ret .= <<<JS
-        <script type="text/javascript">
-            Bugsnag.user = {$userJson};
-            Bugsnag.releaseStage = '{$this->releaseStage}';
-        </script>
-JS;
-
-        return $ret;
     }
 }
