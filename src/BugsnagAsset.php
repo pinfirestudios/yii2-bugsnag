@@ -27,6 +27,11 @@ class BugsnagAsset extends AssetBundle
     public $version = 3;
 
     /**
+     * @type boolean Use the Cloudfront CDN (which will have CORS issues @see https://github.com/bugsnag/bugsnag-js/issues/155
+     */
+    public $useCdn = false;
+
+    /**
      * Initiates Bugsnag javascript registration
      */
     public function init()
@@ -36,7 +41,7 @@ class BugsnagAsset extends AssetBundle
             throw new InvalidConfigException('BugsnagAsset requires Bugsnag component to be enabled');
         }
 
-        if (!in_array($this->version, [2,3]))
+        if (!in_array($this->version, [2, 3]))
         {
             throw new InvalidConfigException('Bugsnag javascript only supports version 2 or 3');
         }
@@ -52,13 +57,23 @@ class BugsnagAsset extends AssetBundle
      */
     private function registerJavascript()
     {
-        Yii::$app->view->registerJsFile('//d2wy8f7a9ursnm.cloudfront.net/bugsnag-' . $this->version . '.min.js', [
+        $filePath = '//d2wy8f7a9ursnm.cloudfront.net/bugsnag-' . $this->version . '.js';
+        if (!$this->useCdn)
+        {
+            $this->sourcePath = '@bower/bugsnag/src';
+            $filePath = 'bugsnag.js';
+        }
+
+        $this->js[] = [
+            $filePath, 
             'data-apikey' => Yii::$app->bugsnag->bugsnag_api_key,
             'data-releasestage' => Yii::$app->bugsnag->releaseStage,
             'data-appversion' => Yii::$app->version,
-        ]);
+            'position' => \yii\web\View::POS_HEAD,
+        ];
 
-        $js = '';
+        // Include this wrapper since bugsnag.js might be blocked by adblockers.  We don't want to completely die if so.
+        $js = 'var Bugsnag = Bugsnag || {};';
 
         if (!Yii::$app->user->isGuest)
         {
@@ -72,9 +87,6 @@ class BugsnagAsset extends AssetBundle
             $js .= "Bugsnag.notifyReleaseStages = $releaseStages;";
         }
 
-        if (!empty($js))
-        {
-            Yii::$app->view->registerJs($js);
-        }
+        Yii::$app->view->registerJs($js, \yii\web\View::POS_BEGIN);
     }
 }
