@@ -70,9 +70,9 @@ class BugsnagLogTarget extends \yii\log\Target
             function($message) use ($levelMap)
             {
                 list($message, $level, $category, $timestamp) = $message; 
-
+                $levelMapLevel = $levelMap[$level];
                 $date = date('Y-m-d H:i:s', $timestamp) . '.' . substr(fmod($timestamp, 1), 2, 4);
-                return "{$levelMap[$level]} - ({$category}) @ {$date} - {$message}";
+                return "{$levelMapLevel} - ({$category}) @ {$date} - {$message}";
             }, 
             self::$exportedMessages, 
             isset(self::$instance) ? self::$instance->messages : [] 
