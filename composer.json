@@ -1,5 +1,5 @@
 {
-    "name": "pinfirestudios/yii2-bugsnag",
+    "name": "jeffwalsh/yii2-bugsnag",
     "description": "Yii2 log target and ErrorHandler for BugSnag",
     "keywords": ["logging", "errors"],
     "license": "MIT",
