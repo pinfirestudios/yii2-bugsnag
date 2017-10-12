@@ -60,7 +60,7 @@ class BugsnagComponent extends \yii\base\Component
     public function getUserData()
     {
         // Don't crash if not using yii\web\User
-        if (empty(Yii::$app->components['user']) || empty(Yii::$app->components['user']['identityClass']))
+        if (!Yii::$app->has('user'))
         {
             return null;
         }
