@@ -60,16 +60,14 @@ class BugsnagComponent extends \yii\base\Component
     public function getUserData()
     {
         // Don't crash if not using yii\web\User
-        if (!Yii::$app->has('user'))
+        if (!Yii::$app->has('user') || !isset(Yii::$app->user->id))
         {
             return null;
         }
 
-        $ret = [];
-        if (isset(Yii::$app->user->id))
-        {
-            $ret['id'] = Yii::$app->user->id;
-        }
+        return [
+            'id' => Yii::$app->user->id,
+        ];
     }
 
     public function getClient()
