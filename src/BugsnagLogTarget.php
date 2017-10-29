@@ -69,7 +69,11 @@ class BugsnagLogTarget extends \yii\log\Target
         return array_map(
             function($message) use ($levelMap)
             {
-                list($message, $level, $category, $timestamp) = $message; 
+                list($message, $level, $category, $timestamp) = $message;
+
+                if (!is_string($message)) {
+                    $message = print_r($message, true);
+                }
 
                 $date = date('Y-m-d H:i:s', $timestamp) . '.' . substr(fmod($timestamp, 1), 2, 4);
                 return "{$levelMap[$level]} - ({$category}) @ {$date} - {$message}";
