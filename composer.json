@@ -17,13 +17,9 @@
     },
     "require": {
         "bugsnag/bugsnag": "2.*",
-        "yiisoft/yii2": "^2.0",
-        "bower-asset/bugsnag": "^3.0"
+        "yiisoft/yii2": "^2.0"
     },
-	"repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ]
+	"suggest": {
+		"bower-asset/bugsnag": "Needed to enable Bugsnag JS logging.  See README.md for installation instructions."
+	}
 }

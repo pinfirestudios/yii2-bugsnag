@@ -25,7 +25,22 @@ To use, configure as such:
         ],
     ];
 
-If you would like to use Bugsnag's javascript on your site, simply depend on BugsnagAsset in your AppAsset.  This will automatically register Bugsnag's javascript to the page.  Default version is 3.
+If you would like to use Bugsnag's javascript on your site, you'll need to install *bower-asset/bugsnag*:
+
+1. Add the following to your project's composer.json
+
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
+
+2. Require bower-asset/bugsnag
+
+    composer require bower-asset/bugsnag
+
+3. Once you have it installed, simply depend on BugsnagAsset in your AppAsset.  This will automatically register Bugsnag's javascript to the page.  Default version is 3.
  
     class AppAsset extends AssetBundle
     {

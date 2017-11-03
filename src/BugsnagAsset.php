@@ -61,7 +61,12 @@ class BugsnagAsset extends AssetBundle
         if (!$this->useCdn)
         {
             $this->sourcePath = '@bower/bugsnag/src';
-            $filePath = 'bugsnag.js';
+			$filePath = 'bugsnag.js';
+
+			if (!file_exists(Yii::getAlias($this>sourcePath . '/' . $filePath)))
+			{
+				throw new InvalidConfigException('Cannot find Bugsnag.js source code.  Is bower-asset/bugsnag installed?');
+			}
         }
 
         $this->js[] = [
