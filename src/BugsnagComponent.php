@@ -3,6 +3,11 @@ namespace pinfirestudios\yii2bugsnag;
 
 use Yii;
 use \yii\web\View;
+use Bugsnag\Client;
+use Bugsnag\Handler;
+use Bugsnag\Report;
+use Bugsnag\Callbacks\CustomUser;
+use Bugsnag\Callbacks\GlobalMetaData;
 
 class BugsnagComponent extends \yii\base\Component
 {
@@ -31,7 +36,10 @@ class BugsnagComponent extends \yii\base\Component
             throw new \yii\base\InvalidConfigException("bugsnag_api_key must be set");
         }
 
-        $this->client = new \Bugsnag_Client($this->bugsnag_api_key);
+        $this->client = Client::make($this->bugsnag_api_key);
+
+        // Reporting unhandled exceptions
+        Handler::register($this->getClient());
 
         if (!empty($this->notifyReleaseStages))
         {
@@ -41,12 +49,30 @@ class BugsnagComponent extends \yii\base\Component
         $this->client->setFilters($this->filters);
 
         $this->client->setBatchSending(true);
-        $this->client->setBeforeNotifyFunction([$this, 'beforeBugsnagNotify']);
 
         if (empty($this->releaseStage))
         {
             $this->releaseStage = defined('YII_ENV') ? YII_ENV : 'production';
         }
+
+        $this->client->setNotifier([
+            'name' => 'Yii2 Bugsnag',
+            'version' => '1.0.0',
+            'url' => 'https://github.com/pinfirestudios/yii2-bugsnag',
+        ]);
+
+        $this->client->registerDefaultCallbacks();
+
+        $this->client->registerCallback(function (Report $report) {
+            if (!$this->exportingLog)
+            {
+                Yii::getLogger()->flush(true);
+            }
+
+            $report->setMetadata([
+                'logs' => BugsnagLogTarget::getMessages(),
+            ]);
+        });
 
         Yii::trace("Setting release stage to {$this->releaseStage}.", __CLASS__);
         $this->client->setReleaseStage($this->releaseStage);
@@ -75,54 +101,41 @@ class BugsnagComponent extends \yii\base\Component
         $clientUserData = $this->getUserData();
         if (!empty($clientUserData))
         {
-            $this->client->setUser($clientUserData);
+          $this->client->registerCallback(new CustomUser(function () use ($clientUserData) {
+              return $clientUserData;
+          }));
         }
 
         return $this->client;
     }
 
-    public function beforeBugsnagNotify(\Bugsnag_Error $error)
-    {
-        if (!$this->exportingLog)
-        {
-            Yii::getLogger()->flush(true);
-        }
-
-        if (isset($error->metaData['trace']))
-        {
-            $trace = $error->metaData['trace'];
-            unset($error->metaData['trace']);
-
-            if (!empty($trace))
-            {
-                $firstFrame = array_shift($trace);
-                $error->setStacktrace(\Bugsnag_Stacktrace::fromBacktrace($error->config, $trace, $firstFrame['file'], $firstFrame['line']));
-            }
-        }
-
-        $error->setMetaData([
-            'logs' => BugsnagLogTarget::getMessages(),
-        ]);
-    }
-
     public function notifyError($category, $message, $trace = null)
     {
-        $this->getClient()->notifyError($category, $message, ['trace' => $trace], 'error');
+        $this->getClient()->notifyError($category, $message, function ($report) use ($trace) {
+          $report->setSeverity('error');
+          $report->setMetaData(['trace' => $trace]);
+        });
     }
 
     public function notifyWarning($category, $message, $trace = null)
     {
-        $this->getClient()->notifyError($category, $message, ['trace' => $trace], 'warning');
+        $this->getClient()->notifyError($category, $message, function ($report) use ($trace) {
+          $report->setSeverity('warning');
+          $report->setMetaData(['trace' => $trace]);
+        });
     }
 
     public function notifyInfo($category, $message, $trace = null)
     {
-        $this->getClient()->notifyError($category, $message, ['trace' => $trace], 'info');
+        $this->getClient()->notifyError($category, $message, function ($report) use ($trace) {
+          $report->setSeverity('info');
+          $report->setMetaData(['trace' => $trace]);
+        });
     }
 
     public function notifyException($exception, $severity = null)
     {
-        $metadata = null;
+        $metadata = ['debug' => 'metadata'];
         if ($exception instanceof BugsnagCustomMetadataInterface)
         {
             $metadata = $exception->getMetadata();
@@ -133,7 +146,10 @@ class BugsnagComponent extends \yii\base\Component
             $this->getClient()->setContext($exception->getContext());
         }
 
-        $this->getClient()->notifyException($exception, $metadata, $severity);
+        $this->getClient()->notifyException($exception, function ($report) use ($severity, $metadata) {
+          $report->setSeverity($severity);
+          $report->setMetaData($metadata);
+        });
     }
 
     public function runShutdownHandler()
@@ -143,6 +159,6 @@ class BugsnagComponent extends \yii\base\Component
             Yii::getLogger()->flush(true);
         }
 
-        $this->getClient()->shutdownHandler();
+        Handler::register($this->getClient())->shutdownHandler();
     }
 }
