@@ -29,7 +29,7 @@ class BugsnagAsset extends AssetBundle
     /**
      * @type boolean Use the Cloudfront CDN (which may have CORS issues @see https://github.com/bugsnag/bugsnag-js/issues/155)
      */
-    public $useCdn = true)
+    public $useCdn = true;
 
     /**
      * Initiates Bugsnag javascript registration
