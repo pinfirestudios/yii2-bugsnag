@@ -8,6 +8,10 @@
             "name": "Justin Cherniak",
             "email": "justin@pinfirestudios.com",
             "homepage": "http://www.pinfirestudios.com"
+        },
+        {
+            "name": "Ivo Pereira",
+            "email": "ivoecpereira@gmail.com"
         }
     ],
     "autoload": {
@@ -16,7 +20,7 @@
         }
     },
     "require": {
-        "bugsnag/bugsnag": "2.*",
+        "bugsnag/bugsnag": "^3.0",
         "yiisoft/yii2": "^2.0"
     },
 	"suggest": {

@@ -41,6 +41,13 @@ trait BugsnagErrorHandlerTrait
         Yii::$app->bugsnag->notifyException($exception);
         $this->inExceptionHandler = true;
 
+        // When running under codeception, a Yii application won't actually exist, so we just have to eat it here...
+        if (is_object(Yii::$app))
+        {
+            // Call into Bugsnag client's errorhandler since this will potentially kill the script below
+            Yii::$app->bugsnag->runShutdownHandler();
+        }
+
         parent::handleException($exception);
     }
 
@@ -52,7 +59,7 @@ trait BugsnagErrorHandlerTrait
         // When running under codeception, a Yii application won't actually exist, so we just have to eat it here...
         if (is_object(Yii::$app))
         {
-            // Call into Bugsnag client's errorhandler since this will potentially kill the script below 
+            // Call into Bugsnag client's errorhandler since this will potentially kill the script below
             Yii::$app->bugsnag->runShutdownHandler();
         }
 
